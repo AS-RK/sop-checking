@@ -17,15 +17,21 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googlea
 # Function to get authenticated Gmail API service
 def get_gmail_service():
     creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+
+    # Check if credentials are stored in session state
+    if 'token' in st.session_state:
+        creds = Credentials.from_authorized_user_info(st.session_state.token, SCOPES)
+
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            st.write("Refreshing expired credentials")
             creds.refresh(Request())
         else:
-            credentials_json = st.secrets['GOOGLE_CREDENTIALS_JSON']
+            st.write("Fetching new credentials")
+            credentials_json = st.secrets.get('GOOGLE_CREDENTIALS_JSON')
             if not credentials_json:
                 raise ValueError("No credentials.json found in environment variables.")
+            
             credentials_info = json.loads(credentials_json)
             flow = InstalledAppFlow.from_client_config(credentials_info, SCOPES)
             auth_url, _ = flow.authorization_url(prompt='consent')
@@ -37,10 +43,19 @@ def get_gmail_service():
             if code:
                 flow.fetch_token(code=code)
                 creds = flow.credentials
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-    service = build('gmail', 'v1', credentials=creds)
-    return service
+
+                # Save credentials to session state
+                st.session_state.token = json.loads(creds.to_json())
+            else:
+                st.write("Authorization code not provided")
+
+    if creds:
+        service = build('gmail', 'v1', credentials=creds)
+        st.write("Gmail service built successfully")
+        return service
+    else:
+        st.write("Failed to obtain credentials")
+        return None
 
 def get_message_details(message):
     """Extracts the subject and content of an email message."""
