@@ -11,7 +11,7 @@ from email.mime.text import MIMEText
 
 # Set up the necessary scopes and credentials file
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.send','https://www.googleapis.com/auth/gmail.modify']
-CREDENTIALS_FILE = 'credentials.json'
+
 
 # Function to get authenticated Gmail API service
 def get_gmail_service():
@@ -22,7 +22,7 @@ def get_gmail_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            credentials_json = st.secrets('GOOGLE_CREDENTIALS_JSON')
+            credentials_json = st.secrets['GOOGLE_CREDENTIALS_JSON']
             if not credentials_json:
                 raise ValueError("No credentials.json found in environment variables.")
             credentials_info = json.loads(credentials_json)
