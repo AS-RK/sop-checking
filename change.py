@@ -20,7 +20,7 @@ def get_gmail_service():
 
     # Check if credentials are stored in session state
     if 'token' in st.session_state:
-        creds = Credentials.from_authorized_user_info(st.session_state.token, SCOPES)
+        creds = Credentials.from_authorized_user_info(st.session_state.token, SCOPES, redirect_uri='https://sop-checking-lap4ndw45jwxerckddc7bn.streamlit.app/)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
