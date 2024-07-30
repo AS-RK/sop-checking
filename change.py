@@ -28,7 +28,15 @@ def get_gmail_service():
                 raise ValueError("No credentials.json found in environment variables.")
             credentials_info = json.loads(credentials_json)
             flow = InstalledAppFlow.from_client_config(credentials_info, SCOPES)
-            creds = flow.run_local_server(port=8508)
+            auth_url, _ = flow.authorization_url(prompt='consent')
+
+            st.write("Please go to this URL and authorize the application:")
+            st.write(auth_url)
+
+            code = st.text_input("Enter the authorization code here:")
+            if code:
+                flow.fetch_token(code=code)
+                creds = flow.credentials
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
     service = build('gmail', 'v1', credentials=creds)
