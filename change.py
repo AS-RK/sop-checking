@@ -34,7 +34,7 @@ def get_gmail_service():
             
             credentials_info = json.loads(credentials_json)
             flow = InstalledAppFlow.from_client_config(credentials_info, SCOPES)
-            auth_url, _ = flow.authorization_url(prompt='consent', redirect_uri='https://sop-checking-lap4ndw45jwxerckddc7bn.streamlit.app/')
+            auth_url, _ = flow.authorization_url(prompt='consent')
             
             st.write("Please go to this URL and authorize the application:")
             st.write(auth_url)
