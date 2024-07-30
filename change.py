@@ -20,7 +20,7 @@ def get_gmail_service():
 
     # Check if credentials are stored in session state
     if 'token' in st.session_state:
-        creds = Credentials.from_authorized_user_info(st.session_state.token, SCOPES, redirect_uri='https://sop-checking-lap4ndw45jwxerckddc7bn.streamlit.app/')
+        creds = Credentials.from_authorized_user_info(st.session_state.token, SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -34,7 +34,7 @@ def get_gmail_service():
             
             credentials_info = json.loads(credentials_json)
             flow = InstalledAppFlow.from_client_config(credentials_info, SCOPES)
-            auth_url, _ = flow.authorization_url(prompt='consent')
+            auth_url, _ = flow.authorization_url(prompt='consent',redirect_uri='https://sop-checking-lap4ndw45jwxerckddc7bn.streamlit.app/')
 
             st.write("Please go to this URL and authorize the application:")
             st.write(auth_url)
