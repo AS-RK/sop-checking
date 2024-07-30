@@ -27,15 +27,15 @@ def get_gmail_service():
             st.write("Refreshing expired credentials")
             creds.refresh(Request())
         else:
-            st.write("Fetching new credentials")
             credentials_json = st.secrets.get('GOOGLE_CREDENTIALS_JSON')
             if not credentials_json:
-                raise ValueError("No credentials.json found in environment variables.")
+                st.error("No credentials.json found in environment variables.")
+                return None
             
             credentials_info = json.loads(credentials_json)
             flow = InstalledAppFlow.from_client_config(credentials_info, SCOPES)
-            auth_url, _ = flow.authorization_url(prompt='consent',redirect_uri='https://sop-checking-lap4ndw45jwxerckddc7bn.streamlit.app/')
-
+            auth_url, _ = flow.authorization_url(prompt='consent', redirect_uri='https://sop-checking-lap4ndw45jwxerckddc7bn.streamlit.app/')
+            
             st.write("Please go to this URL and authorize the application:")
             st.write(auth_url)
 
@@ -43,8 +43,6 @@ def get_gmail_service():
             if code:
                 flow.fetch_token(code=code)
                 creds = flow.credentials
-
-                # Save credentials to session state
                 st.session_state.token = json.loads(creds.to_json())
             else:
                 st.write("Authorization code not provided")
