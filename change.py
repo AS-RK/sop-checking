@@ -249,7 +249,7 @@ def main():
     if 'feedback' not in st.session_state:
         st.session_state.feedback = ""
 
-    client = Groq(api_key="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")
+    client = Groq(api_key=st.secrets["API_KEY"])
     option = st.selectbox("Choose the tool", ("Evaluator",), index=None, placeholder='Choose an option')
     if option == "Evaluator":
         evaluator(client)
